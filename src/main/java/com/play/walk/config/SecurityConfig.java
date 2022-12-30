@@ -37,7 +37,7 @@ public class SecurityConfig {
                 //antMatchers 설정한 리소스의 접근을 인증절차 없이 허용
                 .antMatchers("/login**", "/web-resources/**", "/actuator/**").permitAll()
                 //인증 후 ADMIN 레벨의 권한을 가진 사용자만 접근을 허용한다는
-                .antMatchers("/admin/**").hasAnyRole("ADMIN")
+                //.antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/order/**").hasAnyRole("USER")
 
                 //그외 나머지 리소스들은 무조건 인증을 완료해야 접근이 가능
