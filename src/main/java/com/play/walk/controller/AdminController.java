@@ -1,5 +1,6 @@
 package com.play.walk.controller;
 
+import com.play.walk.mapper.AdminMapper;
 import com.play.walk.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,4 +23,5 @@ public class AdminController {
         System.out.println("test print!");
         adminService.test();
     }
+
 }
