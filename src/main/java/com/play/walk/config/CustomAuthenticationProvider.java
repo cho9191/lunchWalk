@@ -25,23 +25,26 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         log.info("authenticate 시작123");
 
-        String userName = authentication.getName();
-        String password = (String) authentication.getCredentials();
+        String userId = authentication.getName();
+        String userPassword = (String) authentication.getCredentials();
 
-        System.out.println("authenticate 시작 userName : "+userName);
-        System.out.println("authenticate 시작 password : "+password);
+        System.out.println("authenticate 시작 userId : "+userId);
+        System.out.println("authenticate 시작 userPassword : "+userPassword);
 
-        UserDetails user = customUserDetailService.loadUserByUsername(userName);
+        UserDetails user = customUserDetailService.loadUserByUsername(userId);
 
         if (user == null) {
-            throw new BadCredentialsException("해당 아이디가 존재하지 않습니다." + userName);
+            throw new BadCredentialsException("해당 아이디가 존재하지 않습니다." + userId);
         }
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(userPassword, user.getPassword())) {
+            System.out.println("비밀 번호가 틀렸습니다.");
             throw new BadCredentialsException("비밀 번호가 틀렸습니다.");
+        }else{
+            System.out.println("비밀 번호가 맞았습니다.");
         }
 
-        return new UsernamePasswordAuthenticationToken(userName, password, user.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userId, userPassword, user.getAuthorities());
     }
 
     @Override

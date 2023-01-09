@@ -10,7 +10,7 @@ import java.util.Date;
 
 //20220104 DB에 실제로 테이블 생성할 것
 
-@NoArgsConstructor(access =  AccessLevel.PROTECTED)  //동일 패키지 내의 클래스에서만 객체를 생성
+@NoArgsConstructor(access =  AccessLevel.PUBLIC)
 @SequenceGenerator(name="SEQ_USER_INFO_GEN", sequenceName="SEQ_USER_INFO", initialValue = 1, allocationSize = 1)
 @Getter
 @Entity(name="user_info")  //JPA의 Entity
@@ -21,6 +21,7 @@ public class UserVo {
     private Integer id;
     private String userId;
     private String userName;
+    @Setter
     private String userPassword;
     //@ColumnDefault("USER")
     private String userRole;

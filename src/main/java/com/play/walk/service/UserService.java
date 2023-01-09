@@ -4,6 +4,7 @@ import com.play.walk.repository.UserRepository;
 import com.play.walk.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,6 +15,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public void getUserInfo(){
         log.info("UserService Start~! getUserInfo!");
@@ -25,8 +28,10 @@ public class UserService {
 
     public void createUser(UserVo userVo) throws Exception {
         log.info("UserService Start~! createUser!");
+        UserVo vo = userVo;
+        vo.setUserPassword(passwordEncoder.encode(userVo.getUserPassword()));
         try{
-            userRepository.save(userVo);
+            userRepository.save(vo);
         }catch (Exception e){
             log.info("Exception 발생");
             log.info(e.getMessage());
