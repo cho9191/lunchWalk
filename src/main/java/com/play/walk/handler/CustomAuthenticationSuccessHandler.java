@@ -26,7 +26,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         System.out.println("성공 이벤튼 탐");
 
-        setDefaultTargetUrl("/test/print");
+        setDefaultTargetUrl("/admin/test/print");
         SavedRequest savedRequest = requestCache.getRequest(request,response);
         if(savedRequest != null){
             // 인증 받기 전 url로 이동하기

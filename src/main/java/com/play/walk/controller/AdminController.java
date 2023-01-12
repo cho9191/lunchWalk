@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Slf4j
 @RestController
@@ -19,9 +20,10 @@ public class AdminController {
     private AdminService adminService;
 
     @RequestMapping(value = "/test/print", method = {RequestMethod.GET})
-    public void test(){
-        System.out.println("test print!");
-        adminService.test();
+    public RedirectView test(){
+        System.out.println("test print123!");
+        return new RedirectView("/main.html");
+        //adminService.test();
     }
 
 }

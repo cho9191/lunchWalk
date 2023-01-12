@@ -1,5 +1,6 @@
 package com.play.walk.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -22,6 +23,7 @@ public class UserVo {
     private String userId;
     private String userName;
     @Setter
+    @JsonIgnore
     private String userPassword;
     //@ColumnDefault("USER")
     private String userRole;

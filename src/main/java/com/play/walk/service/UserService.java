@@ -18,12 +18,10 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    public void getUserInfo(){
+    public UserVo getUserInfo(String userId){
         log.info("UserService Start~! getUserInfo!");
 
-        Optional<UserVo> userVo = userRepository.findById(1);
-
-        log.info("userVo : " + String.valueOf(userVo));
+        return userRepository.findByUserId(userId);
     }
 
     public void createUser(UserVo userVo) throws Exception {

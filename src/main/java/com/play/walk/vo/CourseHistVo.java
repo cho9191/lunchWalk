@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 //20220104 DB에 실제로 테이블 생성할 것
 
@@ -19,12 +20,17 @@ public class CourseHistVo {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="SEQ_COURSE_HIST_GEN")
     private Integer id;
-    private String courseId;
+    private Integer courseId;
     private Timestamp insDtm;
 
 
+    @PrePersist
+    public void prePersist() {
+        this.insDtm = this.insDtm ==null ? new java.sql.Timestamp(new Date().getTime()) : this.insDtm;
+    }
+
     @Builder
-    public CourseHistVo(Integer id, String courseId, String courseName, String useYn, Timestamp insDtm) {
+    public CourseHistVo(Integer id, Integer courseId, String courseName, String useYn, Timestamp insDtm) {
         this.id = id;
         this.courseId = courseId;
         this.insDtm = insDtm;

@@ -16,19 +16,29 @@ public class CourseHVo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="SEQ_COURSE_H_GEN")
-    private Integer id;
-    private String courseId;
+    private Integer courseId;
     private String courseName;
+    @Setter
     private String courseCreateUserId;
+    private double courseLength;
+    private double courseKcal;
+    private String courseImgUrl;
     private String useYn;
     private Timestamp insDtm;
 
+    @PrePersist
+    public void prePersist() {
+        this.useYn = this.useYn == null ? "Y" : this.useYn;
+        this.insDtm = this.insDtm ==null ? new java.sql.Timestamp(new Date().getTime()) : this.insDtm;
+    }
     @Builder
-    public CourseHVo(Integer id, String courseId, String courseName, String courseCreateUserId, String useYn, Timestamp insDtm) {
-        this.id = id;
+    public CourseHVo(Integer courseId, String courseName, String courseCreateUserId, double courseLength, double courseKcal, String courseImgUrl, String useYn, Timestamp insDtm) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseCreateUserId = courseCreateUserId;
+        this.courseLength = courseLength;
+        this.courseKcal = courseKcal;
+        this.courseImgUrl = courseImgUrl;
         this.useYn = useYn;
         this.insDtm = insDtm;
     }
