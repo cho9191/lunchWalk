@@ -1,11 +1,10 @@
 package com.play.walk.service;
 
 import com.play.walk.mapper.CourseMapper;
+import com.play.walk.repository.CourseDetlRepository;
 import com.play.walk.repository.CourseHRepository;
 import com.play.walk.repository.CourseHistRepository;
-import com.play.walk.vo.CourseHVo;
-import com.play.walk.vo.CourseHistVo;
-import com.play.walk.vo.CourseRtnVo;
+import com.play.walk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +23,8 @@ public class CourseService {
     @Autowired
     private CourseHistRepository courseHistRepository;
     @Autowired
+    private CourseDetlRepository courseDetlRepository;
+    @Autowired
     private CourseMapper courseMapper;
 
     public int createCourse(String courseName, String courseLatitude, String courseLongitude
@@ -32,14 +33,11 @@ public class CourseService {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = (String) principal;
 
-        String[] arrCourseLatitude = courseLatitude.split(",");
-        String[] arrCourseLongitude = courseLongitude.split(",");
+        String[] arrCourseLatitudes = courseLatitude.split(",");
+        String[] arrCourseLongitudes = courseLongitude.split(",");
 
-        System.out.println("arrCourseLatitude.length : "+arrCourseLatitude.length);
-        System.out.println("arrCourseLongitude.length : "+arrCourseLongitude.length);
-        System.out.println("courseImgUrl : "+courseImgUrl);
 
-        if(arrCourseLatitude.length == arrCourseLongitude.length){
+        if(arrCourseLatitudes.length != arrCourseLatitudes.length){
             //throw new RuntimeException("exception 발생");
         }
 
@@ -51,10 +49,24 @@ public class CourseService {
                                                                                     .courseImgUrl(courseImgUrl)
                                                                                     .build());
 
-        //이후 위도, 경도 정보 입력하는 detl 로직 추가할 것
-        System.out.println("resultVo.getCourseId() : "+resultVo.getCourseId());
-
+        if(arrCourseLatitudes.length>0){
+            this.createCourseDetl(resultVo.getCourseId(), arrCourseLatitudes, arrCourseLongitudes);
+        }
         return resultVo.getCourseId();
+    }
+
+    public void createCourseDetl(int courseId, String[] arrCourseLatitudes, String[] arrCourseLongitudes){
+
+        for(int i=0; i<arrCourseLatitudes.length; i++){
+
+            courseDetlRepository.save(CourseDetlVo.builder()
+                    .courseId(courseId)
+                    .courseLatitude(arrCourseLatitudes[i])
+                    .courseLongitude(arrCourseLongitudes[i])
+                    .seq(i)
+                    .build());
+        }
+
     }
 
     public List<CourseRtnVo> searchCourse(){
@@ -73,11 +85,29 @@ public class CourseService {
 
             int randomIdxNum = randomIdxNum(courseRtnVoList.size()-1);
 
+            CourseRtnVo rtnVo = courseRtnVoList.get(randomIdxNum);
+
+            courseHistRepository.save(CourseHistVo.builder()
+                    .courseId(rtnVo.getCourseId())
+                     .autoYn("Y")
+                    .build());
+
             return courseRtnVoList.get(randomIdxNum);
 
         }else{
             return null;
         }
+    }
+
+    public CourseRtnVo todayCourse(){
+
+        CourseRtnVo rtnVo = courseMapper.todayCourse();
+
+        return rtnVo;
+    }
+
+    public List<CourseHistRtnVo> walkHist(){
+        return courseMapper.walkHist();
     }
 
     public int randomIdxNum(int max){
@@ -89,6 +119,52 @@ public class CourseService {
         System.out.println("randomVal : "+randomVal);
 
         return randomVal;
+    }
+
+
+    public String mapUrl(int courseId){
+
+        String url = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=500&h=500";
+        //String center = "&center=127.1054221,37.3591614";
+        String center = "&center=127.1033938,37.4027288";
+        String level = "&level=12";  //14
+        //String marker = "&markers=type:d|size:mid|color:red|pos:127.1033938%2037.4027288";
+        String key = "&X-NCP-APIGW-API-KEY-ID=wq1hwomit5";
+
+        String marker = this.getMarker(courseId);
+        System.out.println("marker : "+marker);
+
+        StringBuilder sb = new StringBuilder();
+        //sb.append(url).append(center).append(level).append(marker).append(key);
+
+        return sb.append(url)
+                        .append(center)
+                        .append(level)
+                        .append(marker)
+                        .append(key)
+                        .toString();
+    }
+
+    public String getMarker(int courseId){
+
+        List<CourseDetlVo> detlList = courseDetlRepository.findByCourseId(courseId);
+
+        StringBuilder sb = new StringBuilder();
+
+        if(detlList.size() > 0) {
+            sb.append("&markers=type:d|size:mid|color:red");
+        }
+
+        for(CourseDetlVo vo : detlList){
+            System.out.println("vo.getCourseId() : "+vo.getCourseId());
+            sb.append("|pos:")
+                    .append(vo.getCourseLongitude())
+                    .append("%20")
+                    .append(vo.getCourseLatitude());
+
+        }
+
+        return sb.toString();
     }
 
 

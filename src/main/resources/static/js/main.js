@@ -1,19 +1,6 @@
 
 var userName = '';
-var courseList = [];
-
-
-//define data array
-tabledata = [
-/*
-    {id:1, courseName:"메인 1코스", courseCount:12, courseLength:"1.5", courseSatisfy:5,  insDtm:"2023-01-01", courseCreateUserName:"홍길동"}
-    ,{id:1, courseName:"메인 2코스", courseCount:5, courseLength:"2.1", courseSatisfy:5,  insDtm:"2023-01-01", courseCreateUserName:"홍길동"}
-    ,{id:1, courseName:"메인 3코스", courseCount:20, courseLength:"3", courseSatisfy:5,  insDtm:"2023-01-01", courseCreateUserName:"홍길동"}
-    ,{id:1, courseName:"메인 4코스", courseCount:10, courseLength:"0.8", courseSatisfy:5,  insDtm:"2023-01-01", courseCreateUserName:"홍길동"}
-    ,{id:1, courseName:"메인 5코스", courseCount:0, courseLength:"1", courseSatisfy:5,  insDtm:"2023-01-01", courseCreateUserName:"홍길동"}
-*/
-];
-
+var bTodayCourse = false;
 
 
 var table = new Tabulator("#courseTable", {
@@ -45,7 +32,6 @@ var table = new Tabulator("#courseTable", {
 
 function courseSearch(){
 
-
     var data = {
     }
 
@@ -53,15 +39,34 @@ function courseSearch(){
         type: "POST",
         url: "/course/search",
         data: JSON.stringify(data),
-        //data: data,
-        //dataType: 'application/json',
         contentType: 'application/json',
         success:function(data){
             console.log(data);
             table.setData(data);
-
             makeCourseList(data);
+        }
+    });
+}
 
+function todayCourse(){
+console.log('todayCourse start!');
+    $.ajax({
+        type: "POST",
+        url: "/course/today",
+        contentType: 'application/json',
+
+        success:function(data){
+            if(data == ''){
+                bTodayCourse = false;
+                setTodayCourseHeasder(false);
+            }else{
+                bTodayCourse = true;
+                setTodayCourseHeasder(true);
+                setTodayCourseTable(data);
+                console.log('before data : ');
+                console.log(data);
+                getMapUrl(data.courseId);
+            }
         }
     });
 }
@@ -71,131 +76,198 @@ function makeCourseList(data){
     var selCourseList = $('#selCourseList');
 
     for(var i=0; i<data.length; i++){
-        selCourseList.append("<option value="+data[i].courseId+">"+data[i].courseName+"</option>"); //ul_list안쪽에 li추가
+        selCourseList.append("<option value="+data[i].courseId+">"+data[i].courseName+"</option>");
     }
 }
 
+function setTodayCourseHeasder(today){
+    console.log('today check!');
+    console.log(today);
+    var header = '';
+    if(today){
+            header = '오늘의 산책 코스 ('+getNowDate()+')';
+    }else{
+        header = '산책 코스 확정 전입니다. /n오늘의 산책 코스를 선택하세요!';
+    }
+    document.getElementById("todayCourseHeader").innerHTML = header;
+}
 
+function setTodayCourseTable(data){
 
+    console.log('setTodayCourseTable start!');
+    console.log(data);
 
-function onAddEventListener(){
+    var html = '';
+    html += '<tr>';
+    html += '<td>'+data.courseName+'</td>';
+    html += '<td>'+data.courseLength+'</td>';
+    html += '<td>'+data.courseKcal+'</td>';
+    html += '<td>'+data.courseCreateUserName+'</td>';
+    html += '</tr>';
 
-    //코스 추가 버튼
-    $('#btnAddCourse').click(function (){
-
-        var data = {
-            courseName : $('#courseName').val(),
-            courseLatitude : '123',
-            courseLongitude : '456',
-            courseKcal : $('#courseKcal').val(),
-            courseLength : $('#courseLength').val()
-        }
-
-        console.log('data');
-        console.log(data);
-
-        $.ajax({
-            type: "POST",
-            url: "/course/create",
-            data: JSON.stringify(data),
-            //data: data,
-            //dataType: 'application/json',
-            contentType: 'application/json',
-            success:function(data){
-                $('#addCourseModal').modal("hide");
-            },
-            error: function (request, status, error) {
-                //console.log("code: " + request.status)
-                //console.log("message: " + request.responseText)
-                //console.log("error: " + error);
-                alert('에러 발생!');
-            }
-        });
-    });
-
-
-    //코스 조회 버튼
-    $('#btnCourseSearch').click(function (){
-        courseSearch();
-    });
-
-    //코스 추가 모달창
-    $('#btnAddCourseModal').click(function (){
-        $('#addCourseModal').modal("show");
-    });
-
-    //라디오 버튼 제어
-    $("input[name='optradio']").change(function (){
-        //alert('이벤트 감지 : '+$("input[name='optradio']:checked").val());
-        var isAutoYn = $("input[name='optradio']:checked").val();
-
-        if('Y' == isAutoYn){
-            $('#selCourseList').attr('disabled', true);
-            $('#selCourseList').attr('hidden', true);
-            $('#labelSelCourseList').attr('hidden', true);
-
-        }else{
-            $('#selCourseList').attr('disabled', false);
-            $('#selCourseList').attr('hidden', false);
-            $('#labelSelCourseList').attr('hidden', false);
-        }
-
-    });
-
-    //코스 선택 버튼
-    $('#btnCourseCnfm').click(function () {
-
-        console.log('111');
-
-        var data = {
-            isAutoYn : $("input[name='optradio']:checked").val()
-        }
-
-        $.ajax({
-            type: "POST",
-            url: "/course/confirm",
-            data: JSON.stringify(data),
-            contentType: 'application/json',
-            success:function(data){
-                //$('#addCourseModal').modal("hide");
-                console.log(data);
-            },
-            error: function (request, status, error) {
-                alert('에러 발생!');
-            }
-        });
-
-    });
-
-
-    //(임시)코스 히스토리 생성
-    //코스 조회 버튼
-    $('#btnTmpCreHist').click(function (){
-
-        var data = {
-            courseId : $('#tmpCourseId').val()
-        }
-
-        console.log(data);
-
-        $.ajax({
-            type: "POST",
-            url: "/course/tmp/hist",
-            data: JSON.stringify(data),
-            contentType: 'application/json',
-            success:function(data){
-                console.log(data);
-
-            }
-        });
-
-    });
+    $("#cnfmCourseTable").empty();
+    $("#cnfmCourseTable").append(html);
 
 }
 
-function getDefaultValue(){
+function getNowDate(){
+    const date = new Date();
 
-    console.log('test11');
+    var YYYY = date.getFullYear();
+    var MM = date.getMonth()+1;
+          MM = String(MM).padStart(2, '0');
+    var DD = date.getDate();
+          DD = String(DD).padStart(2, '0');
+
+    console.log('MM : '+MM)
+return YYYY+'-'+MM+'-'+DD;
+}
+
+
+function getMapUrl(courseId) {
+    console.log('getMapUrl start!');
+
+    var data = {
+        courseId : courseId
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/course/map/url",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data) {
+            console.log('getMapUrl : ');
+            console.log(data);
+            document.getElementById("imgCourseImgStr").src = data;
+        }
+    });
+}
+
+
+function getWalkHist() {
+    console.log('getWalkHist start!');
+
+
+
+    $.ajax({
+        type: "POST",
+        url: "/course/walk/hist",
+        contentType: 'application/json',
+        success: function (data) {
+            console.log(data);
+            console.log(data.length);
+            console.log('getWalkHist end!');
+
+            var html = '';
+            for(var i=0; i<data.length; i++){
+                html += '<tr>';
+                html += '<td>'+data[i].courseDtm+'</td>';
+                html += '<td>'+data[i].courseName+'</td>';
+                html += '<td>'+data[i].courseLength+'</td>';
+                html += '<td>'+data[i].courseKcal+'</td>';
+                html += '<td>'+data[i].courseAttendee+'</td>';
+                html += '</tr>';
+            }
+
+            $("#walkHistoryTable").empty();
+            $("#walkHistoryTable").append(html);
+
+
+        }
+    });
+}
+
+
+//이벤트 등록 영역
+function onAddEventListener(){
+
+                //코스 추가 버튼
+                $('#btnAddCourse').click(function (){
+
+                    var data = {
+                        courseName : $('#courseName').val(),
+                        courseLatitude : $('#courseLatitude').val(),
+                        courseLongitude : $('#courseLongitude').val(),
+                        courseKcal : $('#courseKcal').val(),
+                        courseLength : $('#courseLength').val()
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/course/create",
+                        data: JSON.stringify(data),
+                        //data: data,
+                        //dataType: 'application/json',
+                        contentType: 'application/json',
+                        success:function(data){
+                            $('#addCourseModal').modal("hide");
+                            //setTodayCourseHeasder(bTodayCourse);
+                        },
+                        error: function (request, status, error) {
+                            //console.log("code: " + request.status)
+                            //console.log("message: " + request.responseText)
+                            //console.log("error: " + error);
+                            alert('에러 발생!');
+                        }
+                    });
+                });
+
+
+                //코스 조회 버튼
+                $('#btnCourseSearch').click(function (){
+                    courseSearch();
+                });
+
+                //코스 추가 모달창
+                $('#btnAddCourseModal').click(function (){
+                    $('#addCourseModal').modal("show");
+                });
+
+                //라디오 버튼 제어
+                $("input[name='optradio']").change(function (){
+                    //alert('이벤트 감지 : '+$("input[name='optradio']:checked").val());
+                    var isAutoYn = $("input[name='optradio']:checked").val();
+
+                    if('Y' == isAutoYn){
+                        $('#selCourseList').attr('disabled', true);
+                        $('#selCourseList').attr('hidden', true);
+                        $('#labelSelCourseList').attr('hidden', true);
+
+                    }else{
+                        $('#selCourseList').attr('disabled', false);
+                        $('#selCourseList').attr('hidden', false);
+                        $('#labelSelCourseList').attr('hidden', false);
+                    }
+
+                });
+
+                //코스 선택 버튼
+                $('#btnCourseCnfm').click(function () {
+
+                    var data = {
+                        isAutoYn : $("input[name='optradio']:checked").val()
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/course/confirm",
+                        data: JSON.stringify(data),
+                        contentType: 'application/json',
+                        success:function(data){
+                            todayCourse();
+                        },
+                        error: function (request, status, error) {
+                            alert('에러 발생!');
+                        }
+                    });
+
+                });
+    }
+
+
+
+function getDefaultValue(){
 
     $.ajax({
         type: "POST",
@@ -207,21 +279,17 @@ function getDefaultValue(){
             console.log(data);
             userName = data.userName;
             $('#userName').val(userName);
-            console.log('1userName : '+userName)
-
-
+            console.log('1userName : '+userName);
         }
     });
-
     courseSearch();
+    todayCourse();
+    getWalkHist();
 }
-
 
 
 $( document ).ready(function() {
 
     getDefaultValue();
-
     onAddEventListener();
-
 });

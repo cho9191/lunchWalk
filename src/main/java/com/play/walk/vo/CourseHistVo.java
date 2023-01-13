@@ -21,18 +21,22 @@ public class CourseHistVo {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="SEQ_COURSE_HIST_GEN")
     private Integer id;
     private Integer courseId;
+    private String autoYn;
     private Timestamp insDtm;
 
 
     @PrePersist
     public void prePersist() {
         this.insDtm = this.insDtm ==null ? new java.sql.Timestamp(new Date().getTime()) : this.insDtm;
+        this.autoYn = this.autoYn ==null ? "N" : this.autoYn;
     }
 
     @Builder
-    public CourseHistVo(Integer id, Integer courseId, String courseName, String useYn, Timestamp insDtm) {
+    public CourseHistVo(Integer id, Integer courseId, String autoYn, Timestamp insDtm) {
         this.id = id;
         this.courseId = courseId;
+        this.autoYn = autoYn;
         this.insDtm = insDtm;
     }
 }
+

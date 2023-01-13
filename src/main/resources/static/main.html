@@ -33,6 +33,9 @@
         <a class="nav-link active" data-bs-toggle="tab" href="#home">산책</a>
     </li>
     <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#menuHist">산책 히스토리</a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#menu1">코스 목록</a>
     </li>
     <li class="nav-item">
@@ -72,23 +75,30 @@
 
                     <br>
                         <button type="button" id="btnCourseCnfm" class="btn btn-success mt-3">코스 선택</button>
+                    <button type="button" id="btnCourseCancel" class="btn btn-success mt-3">취소</button>
                 <hr>
-                    <div class="container mt-3 mb-3">
-                        <div class="row">
-                                <div class="col">
-                                    오늘의 코스 :
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="Normal input" value="메인 1코스">
-                                </div>
-                        </div>
-                    </div>
-                    <img src="/image/sampleImg.png" class="mx-auto d-block" style="width:90%">
-                    <br>
-                    <br>
-                    <br>
-                </div>
 
+                    <div class="container mt-3">
+                        <h2 id="todayCourseHeader">오늘의 산책 코스</h2>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>코스명</th>
+                                <th>코스 길이(km)</th>
+                                <th>예상 소모 칼로리(kcal)</th>
+                                <th>코스 생성자</th>
+                            </tr>
+                            </thead>
+                            <tbody id="cnfmCourseTable">
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <img id="imgCourseImgStr" src="/image/sampleImg.png" class="mx-auto d-block" style="width:90%" border="1">
+
+
+                </div>
 
                 <div id="menu1" class="container tab-pane fade">
                     <h2>등록된 산책 코스</h2>
@@ -121,13 +131,13 @@
                             <label for="courseImgUrl">코스 이미지:</label>
                             <input type="text" class="form-control" id="courseImgUrl" placeholder="코스 이미지 URL을 입력하세요." name="courseImgUrl">
                         </div>
-                        <label for="location">위도 경도 (다중 입력시 ,로 구분) :</label>
+                        <label for="location">위도 경도(예: 위도 37.3591614 경도 127.1054221) 다중 입력시 콤마로 구분:</label>
                         <div class="row" id="location">
                             <div class="col">
-                                <input type="text" class="form-control" placeholder="Enter latitude" name="latitude">
+                                <input type="text" class="form-control" id="courseLatitude" placeholder="위도 입력" name="latitude">
                             </div>
                             <div class="col">
-                                <input type="text" class="form-control" placeholder="Enter longitude" name="longitude">
+                                <input type="text" class="form-control" id="courseLongitude" placeholder="경도 입력" name="longitude">
                             </div>
                         </div>
                     </form>
@@ -177,7 +187,22 @@
                     <input type="text" class="form-control" id="tmpCourseId" name="tmpCourseId">
                 </div>
                 <button type="button" id="btnTmpCreHist" class="btn btn-primary">저장</button>
-
+            </div>
+            <div id="menuHist" class="container tab-pane fade">
+                <h2>산책 히스토리</h2>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>산책 날짜</th>
+                        <th>코스명</th>
+                        <th>코스 길이(km)</th>
+                        <th>예상 소모 칼로리(kcal)</th>
+                        <th>코스 참석자</th>
+                    </tr>
+                    </thead>
+                    <tbody id="walkHistoryTable">
+                    </tbody>
+                </table>
             </div>
 
         </div>

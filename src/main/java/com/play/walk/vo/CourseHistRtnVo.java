@@ -3,15 +3,14 @@ package com.play.walk.vo;
 import lombok.Getter;
 
 @Getter
-public class CourseRtnVo {
+public class CourseHistRtnVo {
+    private int courseHistId;
     private int courseId;
     private String courseName;
-    private String courseCreateUserId;
-    private String courseCreateUserName;
     private double courseLength;
     private double courseKcal;
-    private int courseExecuteCnt;
-    private int courseSatisfyPoint;
     private String courseInsDtm;
+    private String courseAttendee;
+    private String courseDtm;
 
 }

@@ -2,10 +2,7 @@ package com.play.walk.controller;
 
 import com.play.walk.service.CourseService;
 import com.play.walk.service.UserService;
-import com.play.walk.vo.CourseDetlVo;
-import com.play.walk.vo.CourseHVo;
-import com.play.walk.vo.CourseRtnVo;
-import com.play.walk.vo.UserVo;
+import com.play.walk.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +63,29 @@ public class CourseController {
         System.out.println("isAutoYn : "+isAutoYn);
         return courseService.createCourse(isAutoYn);
     }
+
+
+    @RequestMapping(value = "/today", method = {RequestMethod.POST})
+    public CourseRtnVo todayCourse(){
+        return courseService.todayCourse();
+    }
+
+    @RequestMapping(value = "/map/url", method = {RequestMethod.POST})
+    public String mapUrl(@RequestBody Map<String, String> params){
+        int courseId = Integer.parseInt(params.get("courseId"));
+        return courseService.mapUrl(courseId);
+    }
+
+    @RequestMapping(value = "/walk/hist", method = {RequestMethod.POST})
+    public List<CourseHistRtnVo> walkHist(){
+        return courseService.walkHist();
+    }
+
+
+
+
+
+
 
     /*
     * 임시 테스트 데이터 생성 영역

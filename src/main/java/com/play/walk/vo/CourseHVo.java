@@ -23,6 +23,7 @@ public class CourseHVo {
     private double courseLength;
     private double courseKcal;
     private String courseImgUrl;
+    private String courseRole; //팀이 여러 팀일 경우 대비
     private String useYn;
     private Timestamp insDtm;
 
@@ -32,13 +33,14 @@ public class CourseHVo {
         this.insDtm = this.insDtm ==null ? new java.sql.Timestamp(new Date().getTime()) : this.insDtm;
     }
     @Builder
-    public CourseHVo(Integer courseId, String courseName, String courseCreateUserId, double courseLength, double courseKcal, String courseImgUrl, String useYn, Timestamp insDtm) {
+    public CourseHVo(Integer courseId, String courseName, String courseCreateUserId, double courseLength, double courseKcal, String courseImgUrl, String courseRole, String useYn, Timestamp insDtm) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseCreateUserId = courseCreateUserId;
         this.courseLength = courseLength;
         this.courseKcal = courseKcal;
         this.courseImgUrl = courseImgUrl;
+        this.courseRole = courseRole;
         this.useYn = useYn;
         this.insDtm = insDtm;
     }
