@@ -3,6 +3,7 @@ package com.play.walk.service;
 import com.play.walk.mapper.CourseMapper;
 import com.play.walk.repository.CourseDetlRepository;
 import com.play.walk.repository.CourseHRepository;
+import com.play.walk.repository.CourseHistAttendeeRepository;
 import com.play.walk.repository.CourseHistRepository;
 import com.play.walk.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,8 @@ public class CourseService {
     private CourseHistRepository courseHistRepository;
     @Autowired
     private CourseDetlRepository courseDetlRepository;
+    @Autowired
+    private CourseHistAttendeeRepository courseHistAttendeeRepository;
     @Autowired
     private CourseMapper courseMapper;
 
@@ -71,15 +74,15 @@ public class CourseService {
 
     public List<CourseRtnVo> searchCourse(){
 
-        return courseMapper.searchCourse();
+        return courseMapper.searchCourse("");
     }
 
 
-    public CourseRtnVo createCourse(String isAutoYn){
+    public CourseRtnVo createCourse(String isAutoYn, String courseId){
+
 
         if("Y".equalsIgnoreCase(isAutoYn)){
-
-            List<CourseRtnVo> courseRtnVoList = courseMapper.searchCourse();
+            List<CourseRtnVo> courseRtnVoList = courseMapper.searchCourse("");
             //리스트 요소 섞기
             Collections.shuffle(courseRtnVoList);
 
@@ -95,8 +98,20 @@ public class CourseService {
             return courseRtnVoList.get(randomIdxNum);
 
         }else{
-            return null;
+
+            List<CourseRtnVo> courseRtnVoList = courseMapper.searchCourse(courseId);
+
+            CourseHistVo vo = courseHistRepository.save(CourseHistVo.builder()
+                    .courseId(Integer.parseInt(courseId))
+                    .autoYn("N")
+                    .build());
+
+            return courseRtnVoList.get(0);
         }
+    }
+
+    public int cancelCourse(){
+        return courseMapper.deleteCourse();
     }
 
     public CourseRtnVo todayCourse(){
@@ -165,6 +180,47 @@ public class CourseService {
         }
 
         return sb.toString();
+    }
+
+
+    public int courseHistAttend(String courseHistIds){
+
+        String[] arrCourseHistIds = courseHistIds.split(",");
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = (String) principal;
+        int saveCnt = 0;
+
+        for(String str : arrCourseHistIds){
+
+            int courseHistId = Integer.parseInt(str);
+
+            int exsistHistCnt = courseHistAttendeeRepository.countByUserIdAndCourseHistId(userId, courseHistId);
+            System.out.println("exsistHistCnt : "+exsistHistCnt);
+            if(exsistHistCnt > 0){
+                continue;
+            }
+
+            courseHistAttendeeRepository.save(CourseHistAttendeeVo.builder()
+                    .courseHistId(courseHistId)
+                    .userId(userId)
+                    .build()
+            );
+            saveCnt++;
+        }
+
+        return saveCnt;
+    }
+
+    public CourseMyWalkHistHeaderRtnVo courseMyWalkHist(){
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = (String) principal;
+
+        CourseMyWalkHistHeaderRtnVo sumVo = courseMapper.myWalkHistSumInfo(userId);
+        sumVo.setCourseMyWalkHistRtnVoList(courseMapper.myWalkHist(userId));
+
+        return sumVo;
     }
 
 

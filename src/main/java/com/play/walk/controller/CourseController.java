@@ -52,16 +52,14 @@ public class CourseController {
         return courseService.searchCourse();
     }
 
-
-
-
     @RequestMapping(value = "/confirm", method = {RequestMethod.POST})
     public CourseRtnVo confirmCourse(@RequestBody Map<String, String> params){
 
         String isAutoYn = params.get("isAutoYn");
+        String courseId = params.get("courseId");
 
-        System.out.println("isAutoYn : "+isAutoYn);
-        return courseService.createCourse(isAutoYn);
+        System.out.println("isAutoYn : "+isAutoYn+" courseId : "+courseId);
+        return courseService.createCourse(isAutoYn, courseId);
     }
 
 
@@ -82,8 +80,23 @@ public class CourseController {
     }
 
 
+    @RequestMapping(value = "/cancel", method = {RequestMethod.POST})
+    public int cancelCourse(){
+        return courseService.cancelCourse();
+    }
 
+    @RequestMapping(value = "/hist/attend", method = {RequestMethod.POST})
+    public int courseHistAttend(@RequestBody Map<String, String> params){
+        String courseHistIds = params.get("courseHistIds");
+        System.out.println("courseHistIds : "+courseHistIds);
 
+        return courseService.courseHistAttend(courseHistIds);
+    }
+
+    @RequestMapping(value = "/my/walk/hist", method = {RequestMethod.POST})
+    public CourseMyWalkHistHeaderRtnVo courseMyWalkHist(){
+        return courseService.courseMyWalkHist();
+    }
 
 
 

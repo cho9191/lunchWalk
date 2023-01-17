@@ -59,13 +59,19 @@ console.log('todayCourse start!');
             if(data == ''){
                 bTodayCourse = false;
                 setTodayCourseHeasder(false);
+
+                $('#btnCourseCnfm').attr('disabled', false);
+                $('#btnCourseCancel').attr('disabled', true);
+
             }else{
                 bTodayCourse = true;
                 setTodayCourseHeasder(true);
                 setTodayCourseTable(data);
-                console.log('before data : ');
-                console.log(data);
                 getMapUrl(data.courseId);
+
+                $('#btnCourseCnfm').attr('disabled', true);
+                $('#btnCourseCancel').attr('disabled', false);
+
             }
         }
     });
@@ -74,6 +80,8 @@ console.log('todayCourse start!');
 
 function makeCourseList(data){
     var selCourseList = $('#selCourseList');
+
+    selCourseList.empty();
 
     for(var i=0; i<data.length; i++){
         selCourseList.append("<option value="+data[i].courseId+">"+data[i].courseName+"</option>");
@@ -87,7 +95,7 @@ function setTodayCourseHeasder(today){
     if(today){
             header = '오늘의 산책 코스 ('+getNowDate()+')';
     }else{
-        header = '산책 코스 확정 전입니다. /n오늘의 산책 코스를 선택하세요!';
+        header = '오늘의 산책 코스를 선택하세요!';
     }
     document.getElementById("todayCourseHeader").innerHTML = header;
 }
@@ -146,9 +154,6 @@ function getMapUrl(courseId) {
 
 
 function getWalkHist() {
-    console.log('getWalkHist start!');
-
-
 
     $.ajax({
         type: "POST",
@@ -162,6 +167,8 @@ function getWalkHist() {
             var html = '';
             for(var i=0; i<data.length; i++){
                 html += '<tr>';
+                html += '<td>'+'<input type="checkbox" name="checkboxName">'+'</td>';
+                html += '<td>'+data[i].courseHistId+'</td>';
                 html += '<td>'+data[i].courseDtm+'</td>';
                 html += '<td>'+data[i].courseName+'</td>';
                 html += '<td>'+data[i].courseLength+'</td>';
@@ -173,11 +180,41 @@ function getWalkHist() {
             $("#walkHistoryTable").empty();
             $("#walkHistoryTable").append(html);
 
-
         }
     });
 }
 
+function getMyWalkHist() {
+
+    $.ajax({
+        type: "POST",
+        url: "/course/my/walk/hist",
+        contentType: 'application/json',
+        success:function(data){
+            console.log('myWalkHist Start!!')
+            console.log(data);
+
+            var html = '';
+            for(var i=0; i<data.courseMyWalkHistRtnVoList.length; i++){
+                html += '<tr>';
+                html += '<td>'+data.courseMyWalkHistRtnVoList[i].courseDtm+'</td>';
+                html += '<td>'+data.courseMyWalkHistRtnVoList[i].courseName+'</td>';
+                html += '</tr>';
+            }
+
+            $("#myWalkHistTable").empty();
+            $("#myWalkHistTable").append(html);
+
+            $('#accumLength').val(data.courseLengthSum+' km');
+            $('#accumKcal').val(data.courseKcalSum+' kcal');
+
+        },
+        error: function (request, status, error) {
+            alert('에러 발생!');
+        }
+    });
+
+}
 
 //이벤트 등록 영역
 function onAddEventListener(){
@@ -213,7 +250,6 @@ function onAddEventListener(){
                     });
                 });
 
-
                 //코스 조회 버튼
                 $('#btnCourseSearch').click(function (){
                     courseSearch();
@@ -226,7 +262,6 @@ function onAddEventListener(){
 
                 //라디오 버튼 제어
                 $("input[name='optradio']").change(function (){
-                    //alert('이벤트 감지 : '+$("input[name='optradio']:checked").val());
                     var isAutoYn = $("input[name='optradio']:checked").val();
 
                     if('Y' == isAutoYn){
@@ -239,14 +274,13 @@ function onAddEventListener(){
                         $('#selCourseList').attr('hidden', false);
                         $('#labelSelCourseList').attr('hidden', false);
                     }
-
                 });
 
                 //코스 선택 버튼
                 $('#btnCourseCnfm').click(function () {
-
                     var data = {
-                        isAutoYn : $("input[name='optradio']:checked").val()
+                        isAutoYn : $("input[name='optradio']:checked").val(),
+                        courseId : $('#selCourseList').val()
                     }
 
                     $.ajax({
@@ -255,41 +289,118 @@ function onAddEventListener(){
                         data: JSON.stringify(data),
                         contentType: 'application/json',
                         success:function(data){
-                            todayCourse();
+                            getDefaultValue();
                         },
                         error: function (request, status, error) {
                             alert('에러 발생!');
                         }
                     });
-
                 });
-    }
+
+
+    //코스 취소 버튼
+    $('#btnCourseCancel').click(function () {
+        $.ajax({
+            type: "POST",
+            url: "/course/cancel",
+            contentType: 'application/json',
+            success:function(data){
+                console.log('cancel succeed!')
+                console.log(data);
+                getDefaultValue();
+                $("#cnfmCourseTable").empty();
+                document.getElementById("imgCourseImgStr").src = '/image/todayCourseImg.png';
+            },
+            error: function (request, status, error) {
+                alert('에러 발생!');
+            }
+        });
+    });
+
+
+     //btnCourseAttendee
+    $('#btnCourseAttendee').click(function () {
+        //alert('btnCourseAttendee click');
+        console.log('btnCourseAttendee click');
+
+        var checkbox = $("input[name='checkboxName']:checked");
+        console.log('checkbox');
+        console.log(checkbox.length);
+
+        //var courseHistId, col2, col3, col4, col5, col6 = '';
+        var courseHistId = '';
+        var courseHistIds = '';
+        var col2, col3, col4, col5, col6 = '';
+
+        checkbox.each(function (i){
+
+            var tr = checkbox.parent().parent().eq(i);
+            var td = tr.children();
+
+            courseHistId = td.eq(1).text();
+
+            courseHistIds += courseHistId;
+            courseHistIds += ',';
+            /*
+            col2 = td.eq(2).text();
+            col3 = td.eq(3).text();
+            col4 = td.eq(4).text();
+            col5 = td.eq(5).text();
+            col6 = td.eq(6).text();
+            */
+            //alert('btnCourseAttendee click col1 : '+courseHistId+" "+col2+" "+col3+" "+col4);
+        });
+
+            var data = {
+                courseHistIds : courseHistIds
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "course/hist/attend",
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success:function(data){
+                    getWalkHist();
+                },
+                error: function (request, status, error) {
+                    alert('에러 발생!');
+                }
+            });
+    });
+
+    //나의 산책 Hist 새로고침 버튼
+    $('#btnMyWalkHist').click(function () {
+        getMyWalkHist();
+    });
+ }
 
 
 
 function getDefaultValue(){
 
-    $.ajax({
-        type: "POST",
-        url: "/user/info",
-        //data: data,
-        dataType: 'json',
-        success:function(data){
+ $.ajax({
+     type: "POST",
+     url: "/user/info",
+     //data: data,
+     dataType: 'json',
+     success:function(data){
 
-            console.log(data);
-            userName = data.userName;
-            $('#userName').val(userName);
-            console.log('1userName : '+userName);
-        }
-    });
-    courseSearch();
-    todayCourse();
-    getWalkHist();
+         console.log(data);
+         userName = data.userName;
+         $('#userName').val(userName);
+         console.log('1userName : '+userName);
+     }
+ });
+ courseSearch();
+ todayCourse();
+ getWalkHist();
+ getMyWalkHist();
 }
 
 
 $( document ).ready(function() {
 
-    getDefaultValue();
-    onAddEventListener();
+ getDefaultValue();
+ onAddEventListener();
 });
