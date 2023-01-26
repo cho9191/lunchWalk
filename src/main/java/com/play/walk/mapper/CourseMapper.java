@@ -20,8 +20,8 @@ public interface CourseMapper {
             ", (select u.user_name from user_info u where u.user_id = h.course_create_user_id) as courseCreateUserName" +
             ", to_char(h.ins_dtm, 'YYYY-MM-DD') as courseInsDtm" +
             " from course_h h" +
-            " where 1=1 " +
-            " and h.course_id = #{courseId} ")
+            " where 1=1 "
+           )
     List<CourseRtnVo> searchCourse(String courseId);
 
 
