@@ -377,7 +377,7 @@ function onAddEventListener(){
 
     //코스 추가 미리보기
     $('#btnPreViewAddCourse').click(function () {
-        alert('test');
+
         var data = {
             courseLatitude : $('#courseLatitude').val(),
             courseLongitude : $('#courseLongitude').val()

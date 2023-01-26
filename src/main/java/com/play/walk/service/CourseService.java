@@ -276,9 +276,9 @@ public class CourseService {
 
         for(int i=0; i<arrCourseLatitudes.length; i++){
             sb.append("|pos:")
-                    .append(arrCourseLatitudes[i])
+                    .append(arrCourseLongitudes[i])
                     .append("%20")
-                    .append(arrCourseLongitudes[i]);
+                    .append(arrCourseLatitudes[i]);
         }
 
         return sb.toString();
