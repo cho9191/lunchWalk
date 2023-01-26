@@ -373,6 +373,31 @@ function onAddEventListener(){
     $('#btnMyWalkHist').click(function () {
         getMyWalkHist();
     });
+
+
+    //코스 추가 미리보기
+    $('#btnPreViewAddCourse').click(function () {
+        alert('test');
+        var data = {
+            courseLatitude : $('#courseLatitude').val(),
+            courseLongitude : $('#courseLongitude').val()
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/course/preview",
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success:function(data){
+                console.log(data);
+                document.getElementById("imgPreviewCourseImgStr").src = data;
+            },
+            error: function (request, status, error) {
+                alert('에러 발생!');
+            }
+        });
+    });
+
  }
 
 

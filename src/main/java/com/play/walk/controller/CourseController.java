@@ -42,7 +42,7 @@ public class CourseController {
         System.out.println("courseKcal : "+courseKcal);
         System.out.println("courseImgUrl : "+courseImgUrl);
 
-        courseService.createCourse(courseName, courseLatitude, courseLongitude, courseLength, courseKcal, courseImgUrl);
+        courseService.createCourse(courseName, courseLatitude, courseLongitude, courseLength, courseKcal);
       return null;
     }
 
@@ -112,6 +112,15 @@ public class CourseController {
 
         courseService.createTmpCreateHist(courseId);
         return null;
+    }
+
+    @RequestMapping(value = "/preview", method = {RequestMethod.POST})
+    public String previewCourse(@RequestBody Map<String, String> params){
+
+        String courseLatitude = params.get("courseLatitude");
+        String courseLongitude = params.get("courseLongitude");
+
+        return courseService.previewMapUrl(courseLatitude, courseLongitude);
     }
 
 }

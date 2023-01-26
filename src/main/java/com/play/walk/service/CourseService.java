@@ -30,8 +30,13 @@ public class CourseService {
     @Autowired
     private CourseMapper courseMapper;
 
+    public static String URL = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=500&h=500";
+    public static String CENTER = "&center=127.1033938,37.4027288";
+    public static String LEVEL = "&level=12";  //14
+    public static String KEY = "&X-NCP-APIGW-API-KEY-ID=wq1hwomit5";
+
     public int createCourse(String courseName, String courseLatitude, String courseLongitude
-            , double courseLength, double courseKcal, String courseImgUrl){
+            , double courseLength, double courseKcal){
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = (String) principal;
@@ -49,7 +54,6 @@ public class CourseService {
                                                                                     .courseCreateUserId(userId)
                                                                                     .courseLength(courseLength)
                                                                                     .courseKcal(courseKcal)
-                                                                                    .courseImgUrl(courseImgUrl)
                                                                                     .build());
 
         if(arrCourseLatitudes.length>0){
@@ -74,7 +78,7 @@ public class CourseService {
 
     public List<CourseRtnVo> searchCourse(){
 
-        return courseMapper.searchCourse("");
+        return courseMapper.searchCourse();
     }
 
 
@@ -82,7 +86,7 @@ public class CourseService {
 
 
         if("Y".equalsIgnoreCase(isAutoYn)){
-            List<CourseRtnVo> courseRtnVoList = courseMapper.searchCourse("");
+            List<CourseRtnVo> courseRtnVoList = courseMapper.searchCourse();
             //리스트 요소 섞기
             Collections.shuffle(courseRtnVoList);
 
@@ -99,7 +103,7 @@ public class CourseService {
 
         }else{
 
-            List<CourseRtnVo> courseRtnVoList = courseMapper.searchCourse(courseId);
+            List<CourseRtnVo> courseRtnVoList = courseMapper.searchCourseWithCourseID(Integer.parseInt(courseId));
 
             CourseHistVo vo = courseHistRepository.save(CourseHistVo.builder()
                     .courseId(Integer.parseInt(courseId))
@@ -139,12 +143,12 @@ public class CourseService {
 
     public String mapUrl(int courseId){
 
-        String url = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=500&h=500";
+        String url = URL;
         //String center = "&center=127.1054221,37.3591614";
-        String center = "&center=127.1033938,37.4027288";
-        String level = "&level=12";  //14
+        String center = CENTER;
+        String level = LEVEL;
         //String marker = "&markers=type:d|size:mid|color:red|pos:127.1033938%2037.4027288";
-        String key = "&X-NCP-APIGW-API-KEY-ID=wq1hwomit5";
+        String key = KEY;
 
         String marker = this.getMarker(courseId);
         System.out.println("marker : "+marker);
@@ -234,6 +238,50 @@ public class CourseService {
         System.out.println("vo.getId() : "+vo.getId());
 
         return 0;
+    }
+
+
+    public String previewMapUrl(String courseLatitude, String courseLongitude){
+
+        String url = URL;
+        String center = CENTER;
+        String level = LEVEL;
+        String key = KEY;
+
+        String marker = this.getPreviewMarker(courseLatitude, courseLongitude);
+
+        System.out.println("marker : "+marker);
+
+        StringBuilder sb = new StringBuilder();
+        //sb.append(url).append(center).append(level).append(marker).append(key);
+
+        return sb.append(url)
+                .append(center)
+                .append(level)
+                .append(marker)
+                .append(key)
+                .toString();
+    }
+
+    public String getPreviewMarker(String courseLatitude, String courseLongitude){
+
+        StringBuilder sb = new StringBuilder();
+
+        String[] arrCourseLatitudes = courseLatitude.split(",");
+        String[] arrCourseLongitudes = courseLongitude.split(",");
+
+        if(arrCourseLatitudes.length > 0) {
+            sb.append("&markers=type:d|size:mid|color:red");
+        }
+
+        for(int i=0; i<arrCourseLatitudes.length; i++){
+            sb.append("|pos:")
+                    .append(arrCourseLatitudes[i])
+                    .append("%20")
+                    .append(arrCourseLongitudes[i]);
+        }
+
+        return sb.toString();
     }
 
 
