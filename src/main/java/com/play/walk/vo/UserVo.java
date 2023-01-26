@@ -23,7 +23,6 @@ public class UserVo {
     private String userId;
     private String userName;
     @Setter
-    @JsonIgnore
     private String userPassword;
     //@ColumnDefault("USER")
     private String userRole;

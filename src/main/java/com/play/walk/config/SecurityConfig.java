@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .loginProcessingUrl("/ttt")
-                .defaultSuccessUrl("/index.html")
+                .defaultSuccessUrl("/main.html")
                 .successHandler(customSuccessHandler)
                 .failureHandler(customFailureHandler)
                ;
