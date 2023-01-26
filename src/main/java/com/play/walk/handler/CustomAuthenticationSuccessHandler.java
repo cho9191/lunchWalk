@@ -30,10 +30,13 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         SavedRequest savedRequest = requestCache.getRequest(request,response);
         if(savedRequest != null){
             // 인증 받기 전 url로 이동하기
-            String targetUrl = savedRequest.getRedirectUrl();
+            System.out.println("성공 이벤튼 탐1");
+            //String targetUrl = savedRequest.getRedirectUrl();
+            String targetUrl = "/main.html";
             redirectStrategy.sendRedirect(request,response,targetUrl);
         }else{
             // 기본 url로 가도록 함
+            System.out.println("성공 이벤튼 탐2");
             redirectStrategy.sendRedirect(request,response,getDefaultTargetUrl());
         }
 

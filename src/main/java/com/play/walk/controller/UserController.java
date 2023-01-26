@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Slf4j
 @RestController
@@ -31,13 +32,15 @@ public class UserController {
     }
 
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public void createUser(@RequestBody UserVo userVo) throws Exception {
-        log.info("createUser Start! ");
+    public RedirectView createUser(@RequestBody UserVo userVo) throws Exception {
+        log.info("1createUser Start! ");
         log.info("getUserId : "+userVo.getUserId());
         log.info("getUserName : "+userVo.getUserName());
         log.info("password : "+userVo.getUserPassword());
 
         userService.createUser(userVo);
+
+        return new RedirectView("/login.html");
     }
 
     @RequestMapping(value = "/info/name", method = {RequestMethod.GET})
