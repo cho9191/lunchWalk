@@ -94,9 +94,12 @@ public interface CourseMapper {
     @Delete("delete from course_hist \n" +
             "where 1=1\n" +
             "and to_char(ins_dtm , 'YYYY-MM-DD')  = to_char(now() , 'YYYY-MM-DD')")
-    int deleteCourse();
+    int deleteCourseHist();
 
-
+    @Delete("delete from course_hist_attendee \n" +
+            "where 1=1\n" +
+            "and to_char(ins_dtm , 'YYYY-MM-DD')  = to_char(now() , 'YYYY-MM-DD')")
+    int deleteCourseAttendeeHist();
 
     @Select("select  t1.course_hist_id \n" +
             ", to_char(t1.ins_dtm , 'YYYY-MM-DD')  as courseDtm\n" +

@@ -41,7 +41,6 @@ function courseSearch(){
         data: JSON.stringify(data),
         contentType: 'application/json',
         success:function(data){
-            console.log(data);
             table.setData(data);
             makeCourseList(data);
         }
@@ -49,7 +48,6 @@ function courseSearch(){
 }
 
 function todayCourse(){
-console.log('todayCourse start!');
     $.ajax({
         type: "POST",
         url: "/course/today",
@@ -89,8 +87,6 @@ function makeCourseList(data){
 }
 
 function setTodayCourseHeasder(today){
-    console.log('today check!');
-    console.log(today);
     var header = '';
     if(today){
             header = '오늘의 산책 코스 ('+getNowDate()+')';
@@ -101,9 +97,6 @@ function setTodayCourseHeasder(today){
 }
 
 function setTodayCourseTable(data){
-
-    console.log('setTodayCourseTable start!');
-    console.log(data);
 
     var html = '';
     html += '<tr>';
@@ -127,13 +120,11 @@ function getNowDate(){
     var DD = date.getDate();
           DD = String(DD).padStart(2, '0');
 
-    console.log('MM : '+MM)
 return YYYY+'-'+MM+'-'+DD;
 }
 
 
 function getMapUrl(courseId) {
-    console.log('getMapUrl start!');
 
     var data = {
         courseId : courseId
@@ -160,9 +151,6 @@ function getWalkHist() {
         url: "/course/walk/hist",
         contentType: 'application/json',
         success: function (data) {
-            console.log(data);
-            console.log(data.length);
-            console.log('getWalkHist end!');
 
             var html = '';
             for(var i=0; i<data.length; i++){
@@ -191,8 +179,6 @@ function getMyWalkHist() {
         url: "/course/my/walk/hist",
         contentType: 'application/json',
         success:function(data){
-            console.log('myWalkHist Start!!')
-            console.log(data);
 
             var html = '';
             for(var i=0; i<data.courseMyWalkHistRtnVoList.length; i++){
@@ -305,8 +291,6 @@ function onAddEventListener(){
             url: "/course/cancel",
             contentType: 'application/json',
             success:function(data){
-                console.log('cancel succeed!')
-                console.log(data);
                 getDefaultValue();
                 $("#cnfmCourseTable").empty();
                 document.getElementById("imgCourseImgStr").src = '/image/todayCourseImg.png';
@@ -320,12 +304,8 @@ function onAddEventListener(){
 
      //btnCourseAttendee
     $('#btnCourseAttendee').click(function () {
-        //alert('btnCourseAttendee click');
-        console.log('btnCourseAttendee click');
 
         var checkbox = $("input[name='checkboxName']:checked");
-        console.log('checkbox');
-        console.log(checkbox.length);
 
         //var courseHistId, col2, col3, col4, col5, col6 = '';
         var courseHistId = '';
@@ -420,11 +400,8 @@ function getDefaultValue(){
      //data: data,
      dataType: 'json',
      success:function(data){
-
-         console.log(data);
          userName = data.userName;
          $('#userName').val(userName);
-         console.log('1userName : '+userName);
      }
  });
  courseSearch();

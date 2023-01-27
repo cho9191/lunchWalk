@@ -58,7 +58,7 @@ public class CourseController {
         String isAutoYn = params.get("isAutoYn");
         String courseId = params.get("courseId");
 
-        System.out.println("isAutoYn : "+isAutoYn+" courseId : "+courseId);
+        log.info("isAutoYn : {}  courseId : {}", isAutoYn, courseId);
         return courseService.createCourse(isAutoYn, courseId);
     }
 

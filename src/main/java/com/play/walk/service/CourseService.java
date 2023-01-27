@@ -86,6 +86,11 @@ public class CourseService {
 
     public CourseRtnVo createCourse(String isAutoYn, String courseId){
 
+        //이미 확정된 코스가 있는지 재확인
+        CourseRtnVo todayVo = courseMapper.todayCourse();
+        if(todayVo != null){
+            return null;
+        }
 
         if("Y".equalsIgnoreCase(isAutoYn)){
             List<CourseRtnVo> courseRtnVoList = courseMapper.searchCourse();
@@ -117,7 +122,8 @@ public class CourseService {
     }
 
     public int cancelCourse(){
-        return courseMapper.deleteCourse();
+        courseMapper.deleteCourseAttendeeHist();
+        return courseMapper.deleteCourseHist();
     }
 
     public CourseRtnVo todayCourse(){
@@ -137,7 +143,7 @@ public class CourseService {
         Random random = new Random();
 
         int randomVal = random.nextInt(max + min) + min;
-        System.out.println("randomVal : "+randomVal);
+        log.info("randomVal : "+randomVal);
 
         return randomVal;
     }
@@ -146,17 +152,13 @@ public class CourseService {
     public String mapUrl(int courseId){
 
         String url = URL;
-        //String center = "&center=127.1054221,37.3591614";
         String center = CENTER;
         String level = LEVEL;
-        //String marker = "&markers=type:d|size:mid|color:red|pos:127.1033938%2037.4027288";
         String key = KEY;
 
         String marker = this.getMarker(courseId);
-        System.out.println("marker : "+marker);
 
         StringBuilder sb = new StringBuilder();
-        //sb.append(url).append(center).append(level).append(marker).append(key);
 
         return sb.append(url)
                         .append(center)
@@ -182,9 +184,7 @@ public class CourseService {
                     .append(vo.getCourseLongitude())
                     .append("%20")
                     .append(vo.getCourseLatitude());
-
         }
-
         return sb.toString();
     }
 
@@ -237,8 +237,6 @@ public class CourseService {
                                                                         .courseId(courseId)
                                                                         .build());
 
-        System.out.println("vo.getId() : "+vo.getId());
-
         return 0;
     }
 
@@ -252,10 +250,7 @@ public class CourseService {
 
         String marker = this.getPreviewMarker(courseLatitude, courseLongitude);
 
-        System.out.println("marker : "+marker);
-
         StringBuilder sb = new StringBuilder();
-        //sb.append(url).append(center).append(level).append(marker).append(key);
 
         return sb.append(url)
                 .append(center)
@@ -282,10 +277,8 @@ public class CourseService {
                     .append("%20")
                     .append(arrCourseLatitudes[i]);
         }
-
         return sb.toString();
     }
-
 
 
 }
