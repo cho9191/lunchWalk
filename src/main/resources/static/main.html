@@ -41,13 +41,16 @@
         <a class="nav-link" data-bs-toggle="tab" href="#menuHist">산책 히스토리</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#menu1">코스 목록</a>
+        <a class="nav-link" data-bs-toggle="tab" href="#menu1_1">코스 목록</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#menu2">코스 추가</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#menu3">나의 정보</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#menu1">코스 목록(테스트중)</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#menu4">임시 데이터 생성</a>
@@ -111,6 +114,27 @@
                     <button type="button" id="btnCourseSearch" class="btn btn-success mt-3 mb-3">조회</button>
                     <div id="courseTable"></div>
                 </div>
+
+            <div id="menu1_1" class="container tab-pane fade">
+                <h2>등록된 산책 코스</h2>
+                <p>등록된 산책 코스 목록</p>
+
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>코스명</th>
+                        <th>산책 횟수</th>
+                        <th>코스 길이</th>
+                        <th>코스 만족도</th>
+                        <th>만든이</th>
+                        <th>코스 등록일</th>
+                    </tr>
+                    </thead>
+                    <tbody id="courseListTable">
+                    </tbody>
+                </table>
+
+            </div>
 
                 <div id="menu2" class="container tab-pane fade">
                     <h2>산책 코스 추가</h2>

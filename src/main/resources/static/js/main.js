@@ -10,21 +10,22 @@ var table = new Tabulator("#courseTable", {
     history:true,             //allow undo and redo actions on the table
     pagination:"local",       //paginate the data
     paginationSize:7,         //allow 7 rows per page of data
-    paginationCounter:"rows", //display count of paginated rows in footer
+    //paginationCounter:"rows", //display count of paginated rows in footer
     movableColumns:true,      //allow column order to be changed
+    resizableColumnFit:true,
     initialSort:[             //set the initial sort order of the data
-        {column:"name", dir:"asc"},
+        {column:"courseName", dir:"asc"},
     ],
     columnDefaults:{
         tooltip:true,         //show tool tips on cells
     },
     columns:[                 //define the table columns
-        {title:"코스명", field:"courseName", width:150, editor:"input"},
-        {title:"산책 횟수", field:"courseExecuteCnt", width:100, hozAlign:"left", formatter:"progress", editor:true},
-        {title:"코스 길이 (km)", field:"courseLength", width:105, editor:"select"},
-        {title:"코스 만족도", field:"courseSatisfyPoint", formatter:"star", hozAlign:"center", width:100, editor:true},
-        {title:"만든이", field:"courseCreateUserName", hozAlign:"center", formatter:"input", editor:false},
-        {title:"코스 등록일", field:"courseInsDtm", width:90, sorter:"date", hozAlign:"center"},
+        {title:"코스명", field:"courseName", width:150, frozen:true, resizable:true},
+        {title:"산책 횟수", field:"courseExecuteCnt", width:100, hozAlign:"left", formatter:"progress", editor:true, resizable:true},
+        {title:"코스 길이 (km)", field:"courseLength", width:105, editor:"select", resizable:true},
+        {title:"코스 만족도", field:"courseSatisfyPoint", formatter:"star", hozAlign:"center", width:100, editor:true, resizable:true},
+        {title:"만든이", field:"courseCreateUserName", hozAlign:"center", formatter:"input", editor:false, width:100, resizable:true},
+        {title:"코스 등록일", field:"courseInsDtm", width:90, sorter:"date", hozAlign:"center", resizable:true},
     ],
 });
 
@@ -41,7 +42,9 @@ function courseSearch(){
         data: JSON.stringify(data),
         contentType: 'application/json',
         success:function(data){
+            //2개의 탭. 하나는 삭제 예정
             table.setData(data);
+            setCourseListTable(data);
             makeCourseList(data);
         }
     });
@@ -108,6 +111,27 @@ function setTodayCourseTable(data){
 
     $("#cnfmCourseTable").empty();
     $("#cnfmCourseTable").append(html);
+
+}
+
+function setCourseListTable(data){
+
+    console.log(data);
+
+    var html = '';
+    for(var i=0; i<data.length; i++){
+        html += '<tr>';
+        html += '<td>'+data[i].courseName+'</td>';
+        html += '<td>'+data[i].courseExecuteCnt+'</td>';
+        html += '<td>'+data[i].courseLength+'</td>';
+        html += '<td>'+data[i].courseSatisfyPoint+'</td>';
+        html += '<td>'+data[i].courseCreateUserName+'</td>';
+        html += '<td>'+data[i].courseInsDtm+'</td>';
+        html += '</tr>';
+    }
+
+    $("#courseListTable").empty();
+    $("#courseListTable").append(html);
 
 }
 
