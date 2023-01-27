@@ -135,10 +135,10 @@
                         <label for="location">위도 경도(예: 위도 37.3591614 경도 127.1054221) 다중 입력시 콤마로 구분:</label>
                         <div class="row" id="location">
                             <div class="col">
-                                <input type="text" class="form-control" id="courseLatitude" placeholder="위도 입력" name="latitude">
+                                <input type="text" class="form-control" id="courseLatitude" placeholder="위도 입력" name="latitude" value="37.4027288,37.368041,37.4062829,">
                             </div>
                             <div class="col">
-                                <input type="text" class="form-control" id="courseLongitude" placeholder="경도 입력" name="longitude">
+                                <input type="text" class="form-control" id="courseLongitude" placeholder="경도 입력" name="longitude" value="127.1033938,127.1013246,127.1164218,">
                             </div>
                         </div>
                     </form>
@@ -150,7 +150,7 @@
                     <button type="button" class="btn btn-primary mt-3" id="btnPreViewAddCourse">
                         미리보기
                     </button>
-                    <img id="imgPreviewCourseImgStr" src="" class="mx-auto d-block" style="width:90%" border="1">
+
                     <!-- The Modal -->
                     <div class="modal" id="addCourseModal">
                         <div class="modal-dialog">
@@ -177,6 +177,34 @@
                         </div>
                     </div>
                     <!--모달 끝-->
+                    <!-- 미리보기 Modal -->
+                    <div class="modal" id="previewCourseModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">미리보기</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <img id="imgPreviewCourseImgStr" src="" class="mx-auto d-block" style="width:90%" border="1">
+                                </div>
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!--미리보기 모달 끝-->
+
+
+
                 </div>
 
             <div id="menu3" class="container tab-pane fade">

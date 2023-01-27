@@ -378,9 +378,19 @@ function onAddEventListener(){
     //코스 추가 미리보기
     $('#btnPreViewAddCourse').click(function () {
 
+        var courseLatitude = $('#courseLatitude').val();
+        var courseLongitude = $('#courseLongitude').val();
+
+        if(courseLongitude=='' || courseLongitude==''){
+            alert('위경도를 입력해야 미리보기를 볼 수 있습니다.');
+            return;
+        }
+
+        $('#previewCourseModal').modal("show");
+
         var data = {
-            courseLatitude : $('#courseLatitude').val(),
-            courseLongitude : $('#courseLongitude').val()
+            courseLatitude : courseLatitude,
+            courseLongitude : courseLongitude
         }
 
         $.ajax({
@@ -389,6 +399,7 @@ function onAddEventListener(){
             data: JSON.stringify(data),
             contentType: 'application/json',
             success:function(data){
+                console.log('preview : ');
                 console.log(data);
                 document.getElementById("imgPreviewCourseImgStr").src = data;
             },
@@ -397,7 +408,6 @@ function onAddEventListener(){
             }
         });
     });
-
  }
 
 

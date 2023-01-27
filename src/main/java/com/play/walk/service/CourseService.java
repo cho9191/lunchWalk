@@ -32,8 +32,10 @@ public class CourseService {
 
     public static String URL = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=500&h=500";
     public static String CENTER = "&center=127.1033938,37.4027288";
-    public static String LEVEL = "&level=12";  //14
+    public static String LEVEL = "&level=14";  //0~20 사이 클 수록 확대
     public static String KEY = "&X-NCP-APIGW-API-KEY-ID=wq1hwomit5";
+    public static String MARKER_SIZE = "small";  //tiny, samll, mid
+    public static String MARKER_COLOR = "Orange";  //Orange, Red, Green, Blue
 
     public int createCourse(String courseName, String courseLatitude, String courseLongitude
             , double courseLength, double courseKcal){
@@ -171,7 +173,7 @@ public class CourseService {
         StringBuilder sb = new StringBuilder();
 
         if(detlList.size() > 0) {
-            sb.append("&markers=type:d|size:mid|color:red");
+            sb.append("&markers=type:d|size:"+MARKER_SIZE+"|color:"+MARKER_COLOR);
         }
 
         for(CourseDetlVo vo : detlList){
@@ -271,7 +273,7 @@ public class CourseService {
         String[] arrCourseLongitudes = courseLongitude.split(",");
 
         if(arrCourseLatitudes.length > 0) {
-            sb.append("&markers=type:d|size:mid|color:red");
+            sb.append("&markers=type:d|size:"+MARKER_SIZE+"|color:"+MARKER_COLOR);
         }
 
         for(int i=0; i<arrCourseLatitudes.length; i++){
