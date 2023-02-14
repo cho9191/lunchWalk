@@ -31,7 +31,7 @@ public class CalcTimeZone {
 
         System.out.format("%s%n%s%n%n", time.getDisplayName(), df.format(date));
 */
-
+        this.df.setTimeZone(this.time);
         String sDate = this.df.format(this.date);
         Timestamp timestamp = Timestamp.valueOf(sDate);
 
