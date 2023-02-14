@@ -1,5 +1,6 @@
 package com.play.walk.vo;
 
+import com.play.walk.utils.CalcTimeZone;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,8 +28,16 @@ public class CourseHistVo {
 
     @PrePersist
     public void prePersist() {
-        this.insDtm = this.insDtm ==null ? new java.sql.Timestamp(new Date().getTime()) : this.insDtm;
+
+        CalcTimeZone calcTimeZone = new CalcTimeZone("Asia/Seoul");
+
+        System.out.println("타임존 체크");
+        System.out.println(calcTimeZone.getNowSeoultime());
+
+        //this.insDtm = this.insDtm ==null ? new java.sql.Timestamp(new Date().getTime()) : this.insDtm;
+        this.insDtm = this.insDtm ==null ? calcTimeZone.getNowSeoultime() : this.insDtm;
         this.autoYn = this.autoYn ==null ? "N" : this.autoYn;
+
     }
 
     @Builder
