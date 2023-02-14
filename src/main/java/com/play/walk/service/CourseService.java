@@ -5,6 +5,7 @@ import com.play.walk.repository.CourseDetlRepository;
 import com.play.walk.repository.CourseHRepository;
 import com.play.walk.repository.CourseHistAttendeeRepository;
 import com.play.walk.repository.CourseHistRepository;
+import com.play.walk.utils.CalcTimeZone;
 import com.play.walk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,6 +178,12 @@ public class CourseService {
         if(detlList.size() > 0) {
             sb.append("&markers=type:d|size:"+MARKER_SIZE+"|color:"+MARKER_COLOR);
         }
+
+        CalcTimeZone calcTimeZone = new CalcTimeZone("Asia/Seoul");
+
+        System.out.println("타임존 체크");
+        System.out.println(calcTimeZone.getNowSeoultime());
+        System.out.println("test123 : "+calcTimeZone.getNowSeoultime());
 
         for(CourseDetlVo vo : detlList){
             System.out.println("vo.getCourseId() : "+vo.getCourseId());
